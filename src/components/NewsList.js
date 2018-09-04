@@ -10,6 +10,12 @@ import OneNews from './OneNews';
 import SortBy from './SortBy';
 
 class NewsList extends React.Component {
+    state = {
+        scrollHeight: 0,
+        scrollTop: 0,
+        clientHeight: 0
+    }
+
     constructor(props) {
         super(props);
     }
@@ -41,6 +47,7 @@ class NewsList extends React.Component {
             (e) => {
                 const { newsIndex, offset } = this.props;
                 this.props.fetchNewsAync(newsIndex.newsIds, offset)
+                this.setState({ ...e })
             },
             (err) => console.log(err))
     }
@@ -51,9 +58,9 @@ class NewsList extends React.Component {
         return (
             <div>
                 <div style={{ position: 'fixed', width: '100%', height: `${topbarHeight}px`, top: '0' }} className={[bulma['navbar'], bulma['is-warning']].join(' ')}>
-                    <div style={{ margin: '2px 15px', textAlign: 'center', alignItems: 'center' }} className={bulma['navbar-brand']}>total news: {newsIndex.newsIds.length}
-                        <CheckUpdates />
-                        <SortBy />
+                    <div style={{ margin: '2px 15px', textAlign: 'center', alignItems: 'center' }} className={bulma['navbar-brand']}>
+                        <p>total news: {newsIndex.newsIds.length}</p>
+                        <p style={{ marginLeft: '5px' }}>scrolling status: {this.state.scrollHeight}, {this.state.scrollTop}, {this.state.clientHeight}</p>
                     </div>
                 </div>
                 <div style={{ marginTop: `${topbarHeight * 1.3}px` }}>
@@ -76,9 +83,9 @@ const scroll$ = Observable.fromEvent(window, 'scroll')
         scrollTop: e.target.scrollingElement.scrollTop,
         clientHeight: e.target.scrollingElement.clientHeight
     }))
-    .filter((position) => {
-        return position.scrollTop + position.clientHeight === position.scrollHeight;
-    });
+    // .filter((position) => {
+    //     return position.scrollTop + position.clientHeight === position.scrollHeight;
+    // });
 
 const mapStateToProps = ({ newsIndex, newsList, offset }) => ({ newsIndex, newsList, offset });
 
